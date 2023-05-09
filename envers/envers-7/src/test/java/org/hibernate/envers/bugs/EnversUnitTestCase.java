@@ -1,9 +1,16 @@
 package org.hibernate.envers.bugs;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.envers.AuditReader;
+import org.hibernate.envers.Audited;
+
 import org.junit.Test;
+import jakarta.persistence.*;
 
 /**
  * This template demonstrates how to develop a test case for Hibernate Envers, using
@@ -15,8 +22,9 @@ public class EnversUnitTestCase extends AbstractEnversTestCase {
 	@Override
 	protected Class[] getAnnotatedClasses() {
 		return new Class[] {
-//				Foo.class,
-//				Bar.class
+				EntityA.class,
+				EntityB.class,
+				EntityC.class
 		};
 	}
 
@@ -47,7 +55,47 @@ public class EnversUnitTestCase extends AbstractEnversTestCase {
 	// Add your tests, using standard JUnit.
 	@Test
 	public void hhh123Test() throws Exception {
-		AuditReader reader = getAuditReader();
-		// Do stuff...
+		final var sf = sessionFactory();
+
+		sf.inTransaction( session -> {
+			session.persist( new EntityA() );
+		} );
+
+		sf.inStatelessTransaction( session -> {
+			final var entityA = session.createQuery( "from EntityA left join fetch children", EntityA.class ).getSingleResult();
+			final var entityB = new EntityB();
+			session.insert( entityB );
+			entityA.children.add( new EntityB() );
+			session.update( entityA );
+		} );
+	}
+
+	@Entity(name = "EntityA")
+	@Table(name = "ENTITY_A")
+	static class EntityA {
+		@Id
+		@GeneratedValue(strategy = GenerationType.AUTO)
+		@Column(name = "ID")
+		Integer id;
+		@OneToMany
+		@JoinColumn(name = "ENTITY_A")
+		Collection<EntityB> children = new ArrayList<>();
+	}
+	@Entity
+	@Table(name = "ENTITY_B")
+	static class EntityB {
+		@Id
+		@GeneratedValue(strategy = GenerationType.AUTO)
+		@Column(name = "ID")
+		Integer id;
+	}
+	@Entity
+	@Audited
+	@Table(name = "ENTITY_C")
+	static class EntityC {
+		@Id
+		@GeneratedValue(strategy = GenerationType.AUTO)
+		@Column(name = "ID")
+		Integer id;
 	}
 }
