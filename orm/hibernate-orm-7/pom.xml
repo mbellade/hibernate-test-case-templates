@@ -88,6 +88,13 @@
 				<version>3.14.0</version>
 				<configuration>
 					<release>17</release>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.hibernate.orm</groupId>
+                            <artifactId>hibernate-jpamodelgen</artifactId>
+                            <version>${version.org.hibernate.orm7}</version>
+                        </path>
+                    </annotationProcessorPaths>
 				</configuration>
 			</plugin>
 			<plugin>
