@@ -78,6 +78,18 @@
 			<version>${version.org.assertj.assertj-core}</version>
 			<scope>test</scope>
 		</dependency>
+
+
+        <dependency>
+            <groupId>jakarta.data</groupId>
+            <artifactId>jakarta.data-api</artifactId>
+            <version>1.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+            <version>3.0.0</version>
+        </dependency>
 	</dependencies>
 
 	<build>
@@ -88,6 +100,13 @@
 				<version>3.14.0</version>
 				<configuration>
 					<release>17</release>
+                    <annotationProcessorPaths>
+                        <annotationProcessorPath>
+                            <groupId>org.hibernate</groupId>
+                            <artifactId>hibernate-jpamodelgen</artifactId>
+                            <version>${version.org.hibernate.orm7}</version>
+                        </annotationProcessorPath>
+                    </annotationProcessorPaths>
 				</configuration>
 			</plugin>
 			<plugin>
