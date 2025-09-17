@@ -3,9 +3,8 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.hibernate.testcasetemplate</groupId>
-	<artifactId>test-case-template-hibernate-orm-6</artifactId>
+	<artifactId>level-one</artifactId>
 	<version>1.0.0.Final</version>
-	<name>Hibernate ORM 6 Test Case Template</name>
 
 	<properties>
 		<version.com.h2database>2.3.232</version.com.h2database>
@@ -34,13 +33,6 @@
 	</dependencyManagement>
 
 	<dependencies>
-        <dependency>
-            <groupId>org.hibernate.testcasetemplate</groupId>
-            <artifactId>level-one</artifactId>
-            <version>1.0.0.Final</version>
-
-        </dependency>
-
 		<dependency>
 			<groupId>org.hibernate.orm</groupId>
 			<artifactId>hibernate-core</artifactId>
@@ -96,14 +88,11 @@
 				<executions>
 					<execution>
 						<configuration>
-							<base>${project.build.testOutputDirectory}</base>
-							<dir>${project.build.testOutputDirectory}</dir>
 							<enableAssociationManagement>false</enableAssociationManagement>
 							<enableDirtyTracking>false</enableDirtyTracking>
 							<enableExtendedEnhancement>false</enableExtendedEnhancement>
 							<enableLazyInitialization>true</enableLazyInitialization>
 						</configuration>
-						<phase>test-compile</phase>
 						<goals>
 							<goal>enhance</goal>
 						</goals>
