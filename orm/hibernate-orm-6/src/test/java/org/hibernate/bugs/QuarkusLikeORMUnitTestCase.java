@@ -82,25 +82,27 @@ class QuarkusLikeORMUnitTestCase {
 			String sqlString = "SELECT distinct n FROM NpAufenthaltsabschnittOV n "
 					+ "LEFT OUTER JOIN FETCH n.ortungsvorgang ov "
 					+ "LEFT OUTER JOIN FETCH ov.nutzungsinformation ni "
-					+ "LEFT OUTER JOIN FETCH ni.niBelege be WHERE n.tens = :tens "
-					+ "AND n.zeitpunktBeginn < :zeitpunktEnde AND n.zeitpunktEnde > :zeitpunktBeginn "
+					+ "LEFT OUTER JOIN FETCH ni.niBelege be "
+//					" WHERE n.tens = :tens "
+//					+ "AND n.zeitpunktBeginn < :zeitpunktEnde AND n.zeitpunktEnde > :zeitpunktBeginn "
 					+ "ORDER BY n.zeitpunktBeginn ASC, n.zeitpunktEnde ASC, n.id ASC";
 
 			TypedQuery<NpAufenthaltsabschnittOV> query = session.createQuery(
 					sqlString,
 					NpAufenthaltsabschnittOV.class
 			);
-			query.setParameter( "tens", "test" );
-			query.setParameter(
-					"zeitpunktBeginn",
-					new TypedParameterValue<Date>( StandardBasicTypes.TIMESTAMP, new Date() )
-			);
-			query.setParameter(
-					"zeitpunktEnde",
-					new TypedParameterValue<Date>( StandardBasicTypes.TIMESTAMP, new Date() )
-			);
+//			query.setParameter( "tens", "DE0075876032600000000000000000050" );
+//			query.setParameter(
+//					"zeitpunktBeginn",
+//					new TypedParameterValue<Date>( StandardBasicTypes.TIMESTAMP, new Date() )
+//			);
+//			query.setParameter(
+//					"zeitpunktEnde",
+//					new TypedParameterValue<Date>( StandardBasicTypes.TIMESTAMP, new Date() )
+//			);
 
 			List<NpAufenthaltsabschnittOV> resultList = query.getResultList();
+			System.out.println("Found " + resultList.size() + " entries");
 		} );
 	}
 }
