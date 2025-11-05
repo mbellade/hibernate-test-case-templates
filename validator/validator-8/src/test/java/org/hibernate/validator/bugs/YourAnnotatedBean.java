@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 
 public class YourAnnotatedBean {
 
-	@NotNull
+	
 	private Long id;
 
 	private String name;

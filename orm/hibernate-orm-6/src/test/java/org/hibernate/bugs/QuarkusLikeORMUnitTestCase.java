@@ -15,7 +15,16 @@
  */
 package org.hibernate.bugs;
 
+import java.util.Date;
+import java.util.List;
+
+import org.hibernate.bugs.domain.NiBeleg;
+import org.hibernate.bugs.domain.NiNutzungsinformation;
+import org.hibernate.bugs.domain.NiOrtungsvorgang;
+import org.hibernate.bugs.domain.NpAufenthaltsabschnittOV;
 import org.hibernate.cfg.AvailableSettings;
+import org.hibernate.query.TypedParameterValue;
+import org.hibernate.type.StandardBasicTypes;
 
 import org.hibernate.testing.bytecode.enhancement.CustomEnhancementContext;
 import org.hibernate.testing.bytecode.enhancement.extension.BytecodeEnhanced;
@@ -26,19 +35,20 @@ import org.hibernate.testing.orm.junit.SessionFactoryScope;
 import org.hibernate.testing.orm.junit.Setting;
 import org.junit.jupiter.api.Test;
 
+import jakarta.persistence.TypedQuery;
+
 /**
  * This template demonstrates how to develop a test case for Hibernate ORM, using its built-in unit test framework.
  * <p>
  * What's even better?  Fork hibernate-orm itself, add your test case directly to a module's unit tests, then
  * submit it as a PR!
  */
-@DomainModel(
-		annotatedClasses = {
-				// Add your entities here, e.g.:
-				// Foo.class,
-				// Bar.class
-		}
-)
+@DomainModel(annotatedClasses = {
+		NiBeleg.class,
+		NiNutzungsinformation.class,
+		NiOrtungsvorgang.class,
+		NpAufenthaltsabschnittOV.class
+})
 @ServiceRegistry(
 		// Add in any settings that are specific to your test.  See resources/hibernate.properties for the defaults.
 		settings = {
@@ -48,21 +58,20 @@ import org.junit.jupiter.api.Test;
 				// @Setting( name = AvailableSettings.GENERATE_STATISTICS, value = "true" ),
 
 				// Other settings that will make your test case run under similar configuration that Quarkus is using by default:
-				@Setting(name = AvailableSettings.PREFERRED_POOLED_OPTIMIZER, value = "pooled-lo"),
-				@Setting(name = AvailableSettings.DEFAULT_BATCH_FETCH_SIZE, value = "16"),
-				@Setting(name = AvailableSettings.BATCH_FETCH_STYLE, value = "PADDED"),
-				@Setting(name = AvailableSettings.QUERY_PLAN_CACHE_MAX_SIZE, value = "2048"),
-				@Setting(name = AvailableSettings.DEFAULT_NULL_ORDERING, value = "none"),
-				@Setting(name = AvailableSettings.IN_CLAUSE_PARAMETER_PADDING, value = "true"),
-				@Setting(name = AvailableSettings.SEQUENCE_INCREMENT_SIZE_MISMATCH_STRATEGY, value = "none"),
-				@Setting(name = AvailableSettings.ORDER_UPDATES, value = "true"),
+//				@Setting(name = AvailableSettings.PREFERRED_POOLED_OPTIMIZER, value = "pooled-lo"),
+//				@Setting(name = AvailableSettings.DEFAULT_BATCH_FETCH_SIZE, value = "16"),
+//				@Setting(name = AvailableSettings.BATCH_FETCH_STYLE, value = "PADDED"),
+//				@Setting(name = AvailableSettings.QUERY_PLAN_CACHE_MAX_SIZE, value = "2048"),
+//				@Setting(name = AvailableSettings.DEFAULT_NULL_ORDERING, value = "none"),
+//				@Setting(name = AvailableSettings.IN_CLAUSE_PARAMETER_PADDING, value = "true"),
+//				@Setting(name = AvailableSettings.SEQUENCE_INCREMENT_SIZE_MISMATCH_STRATEGY, value = "none"),
+//				@Setting(name = AvailableSettings.ORDER_UPDATES, value = "true"),
 
 				// Add your own settings that are a part of your quarkus configuration:
 				// @Setting( name = AvailableSettings.SOME_CONFIGURATION_PROPERTY, value = "SOME_VALUE" ),
-		}
-)
+		})
 @SessionFactory
-@BytecodeEnhanced
+@BytecodeEnhanced(runNotEnhancedAsWell = true)
 @CustomEnhancementContext(QuarkusLikeEnhancementContext.class)
 class QuarkusLikeORMUnitTestCase {
 
@@ -70,7 +79,28 @@ class QuarkusLikeORMUnitTestCase {
 	@Test
 	void hhh123Test(SessionFactoryScope scope) throws Exception {
 		scope.inTransaction( session -> {
-			// Do stuff...
+			String sqlString = "SELECT distinct n FROM NpAufenthaltsabschnittOV n "
+					+ "LEFT OUTER JOIN FETCH n.ortungsvorgang ov "
+					+ "LEFT OUTER JOIN FETCH ov.nutzungsinformation ni "
+					+ "LEFT OUTER JOIN FETCH ni.niBelege be WHERE n.tens = :tens "
+					+ "AND n.zeitpunktBeginn < :zeitpunktEnde AND n.zeitpunktEnde > :zeitpunktBeginn "
+					+ "ORDER BY n.zeitpunktBeginn ASC, n.zeitpunktEnde ASC, n.id ASC";
+
+			TypedQuery<NpAufenthaltsabschnittOV> query = session.createQuery(
+					sqlString,
+					NpAufenthaltsabschnittOV.class
+			);
+			query.setParameter( "tens", "test" );
+			query.setParameter(
+					"zeitpunktBeginn",
+					new TypedParameterValue<Date>( StandardBasicTypes.TIMESTAMP, new Date() )
+			);
+			query.setParameter(
+					"zeitpunktEnde",
+					new TypedParameterValue<Date>( StandardBasicTypes.TIMESTAMP, new Date() )
+			);
+
+			List<NpAufenthaltsabschnittOV> resultList = query.getResultList();
 		} );
 	}
 }
