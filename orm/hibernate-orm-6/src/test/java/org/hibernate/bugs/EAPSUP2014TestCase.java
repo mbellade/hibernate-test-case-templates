@@ -15,7 +15,6 @@
  */
 package org.hibernate.bugs;
 
-import java.util.Date;
 import java.util.List;
 
 import org.hibernate.bugs.domain.NiBeleg;
@@ -23,8 +22,7 @@ import org.hibernate.bugs.domain.NiNutzungsinformation;
 import org.hibernate.bugs.domain.NiOrtungsvorgang;
 import org.hibernate.bugs.domain.NpAufenthaltsabschnittOV;
 import org.hibernate.cfg.AvailableSettings;
-import org.hibernate.query.TypedParameterValue;
-import org.hibernate.type.StandardBasicTypes;
+import org.hibernate.cfg.BatchSettings;
 
 import org.hibernate.testing.bytecode.enhancement.CustomEnhancementContext;
 import org.hibernate.testing.bytecode.enhancement.extension.BytecodeEnhanced;
@@ -55,25 +53,16 @@ import jakarta.persistence.TypedQuery;
 				// For your own convenience to see generated queries:
 				@Setting(name = AvailableSettings.SHOW_SQL, value = "true"),
 				@Setting(name = AvailableSettings.FORMAT_SQL, value = "true"),
-				// @Setting( name = AvailableSettings.GENERATE_STATISTICS, value = "true" ),
-
-				// Other settings that will make your test case run under similar configuration that Quarkus is using by default:
-//				@Setting(name = AvailableSettings.PREFERRED_POOLED_OPTIMIZER, value = "pooled-lo"),
-//				@Setting(name = AvailableSettings.DEFAULT_BATCH_FETCH_SIZE, value = "16"),
-//				@Setting(name = AvailableSettings.BATCH_FETCH_STYLE, value = "PADDED"),
-//				@Setting(name = AvailableSettings.QUERY_PLAN_CACHE_MAX_SIZE, value = "2048"),
-//				@Setting(name = AvailableSettings.DEFAULT_NULL_ORDERING, value = "none"),
-//				@Setting(name = AvailableSettings.IN_CLAUSE_PARAMETER_PADDING, value = "true"),
-//				@Setting(name = AvailableSettings.SEQUENCE_INCREMENT_SIZE_MISMATCH_STRATEGY, value = "none"),
-//				@Setting(name = AvailableSettings.ORDER_UPDATES, value = "true"),
-
-				// Add your own settings that are a part of your quarkus configuration:
-				// @Setting( name = AvailableSettings.SOME_CONFIGURATION_PROPERTY, value = "SOME_VALUE" ),
+				@Setting( name = AvailableSettings.USE_SECOND_LEVEL_CACHE, value = "true" ),
+				@Setting( name = AvailableSettings.USE_QUERY_CACHE, value = "true" ),
+				@Setting( name = AvailableSettings.STATEMENT_BATCH_SIZE, value = "100" ),
+				@Setting( name = AvailableSettings.BATCH_VERSIONED_DATA, value = "true" ),
+				@Setting( name = AvailableSettings.STATEMENT_FETCH_SIZE, value = "50" ),
 		})
 @SessionFactory
 @BytecodeEnhanced(runNotEnhancedAsWell = true)
 @CustomEnhancementContext(QuarkusLikeEnhancementContext.class)
-class QuarkusLikeORMUnitTestCase {
+class EAPSUP2014TestCase {
 
 	// Add your tests, using standard JUnit.
 	@Test
