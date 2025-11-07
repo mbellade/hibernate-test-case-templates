@@ -378,16 +378,16 @@ public class NiOrtungsvorgang extends AbstractIdentifiableEntity implements Seri
 		return Objects.hashCode( getId() );
 	}
 
-	@Override
-	public String toString() {
-		return "NiOrtungsvorgang [id=" + id + ", zeitpunktBeginn=" + zeitpunktBeginn + ", zeitpunktEnde="
-				+ zeitpunktEnde + ", nutzungsinformation=" + nutzungsinformation + ", startOrtLaengskoordinate="
-				+ startOrtLaengskoordinate + ", startOrtBreitkoordinate=" + startOrtBreitkoordinate
-				+ ", zielOrtLaengskoordinate=" + zielOrtLaengskoordinate + ", zielOrtBreitkoordinate="
-				+ zielOrtBreitkoordinate + ", aenderungsgrund=" + aenderungsgrund + ", neu=" + neu + ", schutzvorgang="
-				+ schutzvorgang + ", isdGebiet=" + isdGebiet + ", erstellZeitpunkt=" + erstellZeitpunkt
-				+ ", aenderungszeitstempel=" + aenderungszeitstempel + ", version=" + version + ", konfidenz="
-				+ konfidenz + ", tens=" + tens + "]";
-	}
+//	@Override
+//	public String toString() {
+//		return "NiOrtungsvorgang [id=" + id + ", zeitpunktBeginn=" + zeitpunktBeginn + ", zeitpunktEnde="
+//				+ zeitpunktEnde + ", nutzungsinformation=" + nutzungsinformation + ", startOrtLaengskoordinate="
+//				+ startOrtLaengskoordinate + ", startOrtBreitkoordinate=" + startOrtBreitkoordinate
+//				+ ", zielOrtLaengskoordinate=" + zielOrtLaengskoordinate + ", zielOrtBreitkoordinate="
+//				+ zielOrtBreitkoordinate + ", aenderungsgrund=" + aenderungsgrund + ", neu=" + neu + ", schutzvorgang="
+//				+ schutzvorgang + ", isdGebiet=" + isdGebiet + ", erstellZeitpunkt=" + erstellZeitpunkt
+//				+ ", aenderungszeitstempel=" + aenderungszeitstempel + ", version=" + version + ", konfidenz="
+//				+ konfidenz + ", tens=" + tens + "]";
+//	}
 
 }

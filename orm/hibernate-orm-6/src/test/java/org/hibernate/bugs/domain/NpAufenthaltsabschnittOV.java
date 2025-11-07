@@ -226,12 +226,12 @@ public class NpAufenthaltsabschnittOV extends AbstractIdentifiableEntity impleme
 		return Objects.hash( getId() );
 	}
 
-	@Override
-	public String toString() {
-		return "NpAufenthaltsabschnittOV [id=" + id + ", tens=" + tens + ", zeitpunktBeginn=" + zeitpunktBeginn
-				+ ", zeitpunktEnde=" + zeitpunktEnde + ", status=" + status + ", ov_id= " + ortungsvorgang
-				+ ", isdGebiet=" + isdGebiet + ", neu = " + neu + ", erstellZeitpunkt=" + erstellZeitpunkt
-				+ ", aenderungszeitstempel=" + aenderungszeitstempel + ", version=" + version + "]";
-	}
+//	@Override
+//	public String toString() {
+//		return "NpAufenthaltsabschnittOV [id=" + id + ", tens=" + tens + ", zeitpunktBeginn=" + zeitpunktBeginn
+//				+ ", zeitpunktEnde=" + zeitpunktEnde + ", status=" + status + ", ov_id= " + ortungsvorgang
+//				+ ", isdGebiet=" + isdGebiet + ", neu = " + neu + ", erstellZeitpunkt=" + erstellZeitpunkt
+//				+ ", aenderungszeitstempel=" + aenderungszeitstempel + ", version=" + version + "]";
+//	}
 
 }

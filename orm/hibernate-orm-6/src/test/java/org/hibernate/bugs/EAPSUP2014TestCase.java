@@ -22,7 +22,6 @@ import org.hibernate.bugs.domain.NiNutzungsinformation;
 import org.hibernate.bugs.domain.NiOrtungsvorgang;
 import org.hibernate.bugs.domain.NpAufenthaltsabschnittOV;
 import org.hibernate.cfg.AvailableSettings;
-import org.hibernate.cfg.BatchSettings;
 
 import org.hibernate.testing.bytecode.enhancement.CustomEnhancementContext;
 import org.hibernate.testing.bytecode.enhancement.extension.BytecodeEnhanced;
@@ -31,6 +30,7 @@ import org.hibernate.testing.orm.junit.ServiceRegistry;
 import org.hibernate.testing.orm.junit.SessionFactory;
 import org.hibernate.testing.orm.junit.SessionFactoryScope;
 import org.hibernate.testing.orm.junit.Setting;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 
 import jakarta.persistence.TypedQuery;
@@ -53,21 +53,55 @@ import jakarta.persistence.TypedQuery;
 				// For your own convenience to see generated queries:
 				@Setting(name = AvailableSettings.SHOW_SQL, value = "true"),
 				@Setting(name = AvailableSettings.FORMAT_SQL, value = "true"),
-				@Setting( name = AvailableSettings.USE_SECOND_LEVEL_CACHE, value = "true" ),
-				@Setting( name = AvailableSettings.USE_QUERY_CACHE, value = "true" ),
-				@Setting( name = AvailableSettings.STATEMENT_BATCH_SIZE, value = "100" ),
-				@Setting( name = AvailableSettings.BATCH_VERSIONED_DATA, value = "true" ),
-				@Setting( name = AvailableSettings.STATEMENT_FETCH_SIZE, value = "50" ),
+
+				@Setting(name = AvailableSettings.USE_SECOND_LEVEL_CACHE, value = "true"),
+				@Setting(name = AvailableSettings.USE_MINIMAL_PUTS, value = "false"),
+
+				@Setting(name = AvailableSettings.USE_QUERY_CACHE, value = "true"),
+				@Setting(name = AvailableSettings.STATEMENT_BATCH_SIZE, value = "100"),
+				@Setting(name = AvailableSettings.BATCH_VERSIONED_DATA, value = "true"),
+				@Setting(name = AvailableSettings.STATEMENT_FETCH_SIZE, value = "50"),
+				@Setting(name = AvailableSettings.JPA_PROXY_COMPLIANCE, value = "true"),
 		})
 @SessionFactory
-@BytecodeEnhanced(runNotEnhancedAsWell = true)
+@BytecodeEnhanced//(runNotEnhancedAsWell = true)
 @CustomEnhancementContext(QuarkusLikeEnhancementContext.class)
 class EAPSUP2014TestCase {
+
+	@AfterAll
+	public void cleanUp(SessionFactoryScope scope) {
+		scope.getSessionFactory().getSchemaManager().truncateMappedObjects();
+	}
 
 	// Add your tests, using standard JUnit.
 	@Test
 	void hhh123Test(SessionFactoryScope scope) throws Exception {
+//		final var niort1 = scope.fromTransaction( session -> {
+//			return session.find( NiOrtungsvorgang.class, 1L );
+//		} );
 		scope.inTransaction( session -> {
+			final var niort1 = session.find( NiOrtungsvorgang.class, 1L );
+			final var niort2 = session.find( NiOrtungsvorgang.class, 2L );
+			final var niort3 = session.find( NiOrtungsvorgang.class, 3L );
+
+			final var e1 = new NpAufenthaltsabschnittOV();
+//			e1.setOrtungsvorgang( session.merge( niort1 ) );
+			e1.setOrtungsvorgang( niort1 );
+			session.persist( e1 );
+
+			final var e2 = new NpAufenthaltsabschnittOV();
+			e2.setOrtungsvorgang( session.merge( niort2 ) );
+			session.persist( e2 );
+
+			final var e3 = new NpAufenthaltsabschnittOV();
+			e3.setOrtungsvorgang( session.merge( niort3 ) );
+			session.persist( e3 );
+
+			session.flush();
+			session.clear();
+
+			final var npAufenthaltsabschnittOV = session.find( NpAufenthaltsabschnittOV.class, e1.getId() );
+
 			String sqlString = "SELECT distinct n FROM NpAufenthaltsabschnittOV n "
 					+ "LEFT OUTER JOIN FETCH n.ortungsvorgang ov "
 					+ "LEFT OUTER JOIN FETCH ov.nutzungsinformation ni "
@@ -76,22 +110,14 @@ class EAPSUP2014TestCase {
 //					+ "AND n.zeitpunktBeginn < :zeitpunktEnde AND n.zeitpunktEnde > :zeitpunktBeginn "
 					+ "ORDER BY n.zeitpunktBeginn ASC, n.zeitpunktEnde ASC, n.id ASC";
 
-			TypedQuery<NpAufenthaltsabschnittOV> query = session.createQuery(
+			final var query = session.createQuery(
 					sqlString,
 					NpAufenthaltsabschnittOV.class
 			);
-//			query.setParameter( "tens", "DE0075876032600000000000000000050" );
-//			query.setParameter(
-//					"zeitpunktBeginn",
-//					new TypedParameterValue<Date>( StandardBasicTypes.TIMESTAMP, new Date() )
-//			);
-//			query.setParameter(
-//					"zeitpunktEnde",
-//					new TypedParameterValue<Date>( StandardBasicTypes.TIMESTAMP, new Date() )
-//			);
 
-			List<NpAufenthaltsabschnittOV> resultList = query.getResultList();
-			System.out.println("Found " + resultList.size() + " entries");
+			final var resultList = query.getResultList();
+
+			System.out.println( "Found " + resultList.size() + " entries" );
 		} );
 	}
 }
